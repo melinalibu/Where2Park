@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Parkhaus Game</h1>
+  <p id="subtitle"></p>
+
+  <table id="detailsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Erfasst (Zeit)</th>
+        <th>Adresse</th>
+        <th>Kapazität</th>
+        <th>Frei</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">Lade Daten...</td></tr>
+    </tbody>
+  </table>
+
+  <p><a id="backLink" href="parkhaus_waehlen.html">← Zurück zur Auswahl</a></p>
+
+  <!-- Canvas für die Fahrzeug-Simulation -->
+  <div style="margin-top:20px;">
+    <canvas id="gameCanvas" width="900" height="500" style="border:1px solid #ccc; display:block; background:#222;"></canvas>
+
+    <div id="gameControls" style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+      <button id="startGameBtn">Start Simulation</button>
+      <button id="backToDateBtn" style="margin-left:8px;">Zurück zur Datum-Auswahl</button>
+      <button id="restartBtn">Neu laden</button>
+      <div id="timerDisplay" style="margin-left:12px;">Autos: <span id="carCount">0</span></div>
+    </div>
+  </div>
+
+  <script src="/js/game.js"></script>
+</body>
+</html>

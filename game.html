@@ -2,46 +2,53 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Game</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-  </style>
+  <title>Where2Park</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <h1 id="title">Parkhaus Game</h1>
-  <p id="subtitle"></p>
 
-  <table id="detailsTable" style="display:none;">
-    <thead>
-      <tr>
-        <th>Erfasst (Zeit)</th>
-        <th>Adresse</th>
-        <th>Kapazität</th>
-        <th>Frei</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="5">Lade Daten...</td></tr>
-    </tbody>
-  </table>
+  <!-- HEADER -->
+  <header id="gameHeader">
+    <h1 id="siteTitle">Where2Park</h1>
+  </header>
 
-  <p><a id="backLink" href="parkhaus_waehlen.html">← Zurück zur Auswahl</a></p>
-
-  <!-- Canvas für die Fahrzeug-Simulation -->
-  <div style="margin-top:20px;">
-    <canvas id="gameCanvas" width="900" height="500" style="border:1px solid #ccc; display:block; background:#222;"></canvas>
-
-    <div id="gameControls" style="margin-top:8px; display:flex; gap:8px; align-items:center;">
-      <button id="startGameBtn">Start Simulation</button>
-      <button id="backToDateBtn" style="margin-left:8px;">Zurück zur Datum-Auswahl</button>
-      <button id="restartBtn">Neu laden</button>
-      <div id="timerDisplay" style="margin-left:12px;">Autos: <span id="carCount">0</span></div>
-    </div>
+  <!-- SPIEL CONTAINER -->
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="1338" height="748"></canvas>
+      <div id="parkhausName">Parkhaus</div>
+    <div id="timerDisplay">Zeit: 00:00</div>
+    <div id="matchedInfo"></div>
   </div>
 
-  <script src="/js/game.js"></script>
+ <!-- STARTSCREEN -->
+<div id="startScreen">
+  <div id="startWindow">
+    <h1>Escape Game</h1>
+    <p>Klicke auf Start, um zu spielen!</p>
+    <button id="startGameBtn">Start</button>
+  </div>
+</div>
+
+ <!-- GAME OVER SCREEN -->
+<div id="gameOverScreen">
+  <div id="gameOverWindow">
+    <h1>Unfall!!</h1>
+    <p><span id="survivedTimeDisplay">00:00</span> Sekunden bis zum Zusammenprall.</p>
+    <button id="restartBtn">
+  <img id="icon_Restart" src="img/icon_Restart.png" alt="Restart">
+</button>
+
+  <script src="js/game.js"></script>
+  <script>
+    // Klick auf Header h1 → zurück zur Startseite
+    (function(){
+      var headerTitle = document.getElementById('siteTitle');
+      if (headerTitle) {
+        headerTitle.style.cursor = 'pointer';
+        headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
+      }
+    })();
+  </script>
 </body>
 </html>

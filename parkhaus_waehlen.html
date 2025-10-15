@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
+  <head>
   <meta charset="UTF-8">
-  <title>Parkhaus auswählen</title>
+  <title>Where2Park</title> 
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <h1>Verfügbare Parkhäuser</h1>
-  <p id="info">Lade Parkhäuser für das gewählte Datum...</p>
-  <ul id="parkhausList">
-    <li>Lade Daten...</li>
-  </ul>
+<body class="parkwahl">
 
-  <script src="/js/waehlen.js"></script>
+  <!-- HEADER -->
+  <header id="gameHeader">
+    <h1 id="siteTitle">Where2Park</h1>
+  </header>
+
+  <!-- Parkhaus-Bilder -->
+  <img id="parkhaus1" src="/img/1parkhaus.png" alt="Parkhaus 1">
+  <img id="parkhaus2" src="/img/2parkhaus.png" alt="Parkhaus 2">
+  <img id="parkhaus3" src="/img/3parkhaus.png" alt="Parkhaus 3">
+  <img id="parkhaus4" src="/img/4parkhaus.png" alt="Parkhaus 4"> 
+  <img id="parkhaus5" src="/img/5parkhaus.png" alt="Parkhaus 5">
+
+
+  <script src="/js/parkhaus_waehlen.js"></script>
+  <script>
+    var headerTitle = document.getElementById('siteTitle');
+    if (headerTitle) { headerTitle.style.cursor = 'pointer'; headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; }); }
+  </script>
+
 </body>
 </html>

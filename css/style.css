@@ -1,0 +1,330 @@
+body {
+  margin: 0;
+  padding-top: 140px; /* Header-Höhe + gewünschter Abstand */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  overflow: hidden;
+  background: white;
+  font-family: "DIN Condensed";
+}
+
+
+/* Canvas */
+canvas {
+  width: 1200px;  /* 80% von 1338 */
+  height: 598px;  /* 80% von 748 */
+  background: white;
+  display: block;
+  cursor: none;
+  border-radius: 50px;
+  border: 5px solid #13388F;
+}
+
+
+/* Spiel-Container */
+#gameContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 50px;
+}
+
+
+/* Header */
+Header {
+  position: fixed;           
+  top: 0;                    
+  left: 0;                   
+  width: 100vw;              
+  height: 122px;             
+  background-color: #13388F; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;               
+}
+
+
+/* Header Text */
+Header h1 {
+color: #FFF;
+font-family: "DIN Condensed";
+font-size: 90px;
+
+  width: 603px;
+  height: 96px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 23px;
+  border: 6px solid #FFF;
+
+
+/* utility layout helpers */
+.centered { text-align: center; margin-top: 12px; }
+.closedMain { padding: 160px 20px 20px; text-align: center; }
+.mt18 { margin-top: 18px; }
+}
+
+
+/* Timer */
+#timerDisplay {
+  position: absolute;
+  top: -35px;  /* leicht über Canvas */
+  right: 40px;
+  font-size: calc(90vw * 28 / 1338);
+  font-weight: bold;
+  color: #13388F;
+  font-family: DIN Condensed, Arial, sans-serif;
+  z-index: 20;
+}
+/* Parkhaus-Anzeige */
+#parkhausName {
+  position: absolute;
+  top: -35px;   /* gleiche Höhe wie der Timer */
+  left: 40px;   /* Abstand vom linken Rand */
+  font-size: calc(90vw * 28 / 1338); /* gleiche Größe wie Timer */
+  font-weight: bold;
+  color: #13388F;
+  font-family: DIN Condensed, Arial, sans-serif;
+  z-index: 20;
+}
+
+/* Startscreen overlay */
+#startScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.321); /* optional: halbtransparentes Overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; /* über Canvas */
+}
+
+/* Neues zentrales Fenster */
+#startWindow {
+  width: 498px;
+  height: 484px;
+  background: #13388F;
+  border-radius: 63px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  text-align: center;
+  padding: 20px; /* optional für etwas Abstand */
+}
+
+/* Startbutton */
+#startGameBtn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #FFF;
+  color: #13388F;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+#startGameBtn:hover {
+  background-color: #e0e0e0;
+}
+/* Game Over Screen overlay */
+#gameOverScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5); /* halbtransparentes Overlay */
+  display: none;               /* standardmäßig unsichtbar */
+  align-items: center;
+  justify-content: center;
+  z-index: 100;                /* über Canvas */
+}
+
+/* Neues zentrales Fenster für Game Over */
+#gameOverWindow {
+  width: 498px;
+  height: 484px;
+  background: #13388F;
+  border-radius: 63px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Wiederholen Button */
+#restartBtn {
+  width: 46px;
+  height: 45px;
+  border: none;
+  background: none; /* transparent */
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#restartBtn img#icon_Restart {
+  width: 46px;
+  height: 45px;
+  object-fit: contain; /* Bild skaliert passend */
+}
+
+#gameOverWindow h1 {
+color: #FFF;
+text-align: center;
+font-family: "DIN Condensed";
+font-size: 96px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+margin: 0;
+}
+#gameOverWindow p {
+  font-size: 28px;
+  color: white;
+  text-align: center;
+  margin: 0 auto 20px auto;   /* zentriert mit Abstand nach unten */
+  width: 70%;                 /* reduziert die Breite auf 70 % des Containers */
+  max-width: 350px;           /* verhindert, dass es zu breit wird */
+}
+
+/* === HINTERGRUND NUR FÜR Parkhaus_Wahl-SEITE === */
+body.parkwahl {
+  /* use absolute path so CSS resolves image correctly regardless of CSS file location */
+  background: url("/img/hintergrund.png") no-repeat center top;
+  background-size: 100% auto;   /* Breite = Bildschirm, Höhe proportional */
+  background-color: white;       /* Balken oben/unten, falls nötig */
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* hide captions on the parkhaus selection page (they are shown on the start page only) */
+/* captions removed: no CSS needed */
+/* Parkhaus-Bilder auf Startseite */
+
+#parkhaus1, #parkhaus2, #parkhaus3, #parkhaus4, #parkhaus5 {
+  position: absolute;
+  cursor: pointer;    /* optional: Mauszeiger zeigen, dass klickbar */
+}
+/* Hover-Effekt: leicht vergrößern */
+#parkhaus1:hover,
+#parkhaus2:hover,
+#parkhaus3:hover,
+#parkhaus4:hover,
+#parkhaus5:hover {
+  transform: scale(1.1); /* 10% größer */
+}
+
+/* Positionen anpassen */
+#parkhaus1 {
+  top: 200px;         /* Abstand vom oberen Rand */
+  left: 150px;        /* Abstand vom linken Rand */
+  width: auto;       /* Breite anpassen */
+  height: auto;       /* Höhe proportional */
+}
+
+#parkhaus2 {
+  bottom:  200px;
+  left: 220px;       /* Abstand vom rechten Rand */
+  width: auto;       /* Breite anpassen */
+  height: auto;       /* Höhe proportional */
+}
+
+#parkhaus3 {
+  bottom: 160px;
+  right: 190px;
+  width: 400px;   /* größere Breite */
+  height: 300px;   /* Höhe proportional zur Breite */
+}
+
+#parkhaus4 {
+  bottom: 220px;
+  right: 505px;
+  width: auto;       /* Breite anpassen */
+  height: auto;       /* Höhe proportional */
+}
+#parkhaus5 {
+  top:  160px;
+  right: 150px;
+  width: auto;       /* Breite anpassen */
+  height: auto;       /* Höhe proportional */
+}
+
+
+.infoBox {
+  width: 1126px;
+  height: 503px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  padding: 30px; /* mehr Abstand zwischen Text und Boxrand */
+  border: 8px solid #13388F;
+  border-radius: 33px;
+  position: relative;
+  z-index: 5;
+
+  display: flex;                /* aktiviert Flexbox */
+  flex-direction: column;       /* Elemente untereinander anordnen */
+  justify-content: center;      /* vertikal zentrieren */
+  align-items: center;          /* horizontal zentrieren */
+  text-align: center;           /* Text in der Mitte ausrichten */
+}
+
+.infoBox p {
+  color: #13388F; 
+  font-family: "DIN Condensed";
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.3;  /* besserer Zeilenabstand */
+  margin-bottom: 40px; /* Abstand zwischen Text und Button */
+  max-width: 900px; /* optional: Textbreite begrenzen */
+}
+.infoBox .btn {
+  background-color:#13388F;
+  
+  width: 214px;
+  height: 47px;
+  border: 2px solid #13388F;
+  border-radius: 9px;
+  text-align: center;
+  font-family: "DIN Condensed";
+  color: white;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  }
+
+  .btn:hover {
+  background: white;     /* Hintergrund wird weiss */
+  color: #13388F;        /* Text wird blau */
+}
+
+body.index {
+  background: url("..img/image2.png") no-repeat center center fixed;
+  background-size: cover;   /* Bild wird skaliert, sodass es den ganzen Bildschirm ausfüllt */
+  margin: 0;
+  padding: 0;
+}

@@ -1,194 +1,280 @@
-// details.js — spawn moving points for occupied/free spots; player is cursor-controlled and must avoid collisions
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const startGameBtn = document.getElementById("startGameBtn");
+const restartBtn = document.getElementById("restartBtn");
+const timerDisplay = document.getElementById("timerDisplay");
+const survivedTimeDisplay = document.getElementById("survivedTimeDisplay");
+
+// Formatierte Zeit (mm:ss)
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return String(mins).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+}
+
+// Bilder
+const playerImg = new Image();
+playerImg.src = "/img/player.png";
+const enemyImg = new Image();
+enemyImg.src = "/img/enemy.png";
+const backgroundImg = new Image();
+backgroundImg.src = "/img/back_park.png";
+
+// Spielvariablen
+let player, enemies, enemyCount = 0, gameOver, gameWin, timeLeft, mouseX, mouseY, timer, gameRunning;
+let startTime, invincibleTime = 1000; // 1 Sekunde Schutzzeit
+let survivedTime = 0;
+const MAX_ENEMIES = 600;
+// enemy base speed multiplier (tune this value to make enemies faster/slower)
+const ENEMY_SPEED = 5;
+
+// Read params and load parkhaus data
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const selectedDate = params.get('date');
   const selectedTime = params.get('time');
   const selectedName = params.get('name');
 
-  const titleEl = document.getElementById('title');
-  const subtitleEl = document.getElementById('subtitle');
-  const tableEl = document.getElementById('detailsTable');
-  const carCountEl = document.getElementById('carCount');
+  const parkhausLabel = document.getElementById('parkhausName');
+  if (parkhausLabel && selectedName) parkhausLabel.textContent = selectedName;
 
-  // hide table if present
-  if (tableEl) tableEl.style.display = 'none';
-
-  titleEl && (titleEl.textContent = selectedName || 'Parkhaus Details');
-  subtitleEl && (subtitleEl.textContent = `Datum: ${selectedDate || '-'}  •  Zeit: ${selectedTime || '-'}`);
-
-  if (!selectedName) {
-    console.error('Kein Parkhausname im Query-String');
-    return;
-  }
-
+  // Fetch datasets and find matching record for this parkhaus/name + date/time
   fetch('/php/unload.php')
-    .then(res => { if (!res.ok) throw new Error('Netzwerkantwort nicht OK'); return res.json(); })
-    .then(data => {
-      if (!Array.isArray(data)) throw new Error('Unerwartetes Datenformat');
-
-      const entries = data.filter(item => item.name === selectedName && item.publication_time && (!selectedDate || item.publication_time.split(' ')[0] === selectedDate));
-      if (entries.length === 0) {
-        alert('Keine Daten für dieses Parkhaus gefunden');
-        return;
+    .then(function (res) { if (!res.ok) throw new Error('Netzwerkfehler'); return res.json(); })
+    .then(function (data) {
+      if (!Array.isArray(data)) return;
+      // find entries with matching name and date. Use a robust parser for publication_time
+      function parsePublication(pub) {
+        // match formats like 'YYYY-MM-DD HH:MM:SS' or 'YYYY-MM-DDTHH:MM:SS'
+        if (!pub) return null;
+        var m = pub.match(/^(\d{4}-\d{2}-\d{2})[T\s](\d{2}:\d{2})(:?\d{0,2})?/);
+        if (m) return { date: m[1], hm: m[2], full: pub };
+        // fallback: try splitting by space
+        var parts = pub.split(' ');
+        if (parts.length >= 2) return { date: parts[0], hm: (parts[1] || '').slice(0,5), full: pub };
+        return { date: pub, hm: null, full: pub };
       }
 
-      // pick best entry (closest to selectedTime if provided)
-      let chosen = entries[0];
-      if (selectedTime) {
-        const target = new Date(`${selectedDate}T${selectedTime}:00`);
-        entries.sort((a, b) => Math.abs(new Date(a.publication_time.replace(' ', 'T')) - target) - Math.abs(new Date(b.publication_time.replace(' ', 'T')) - target));
-        chosen = entries[0];
-      } else {
-        entries.sort((a, b) => new Date(b.publication_time) - new Date(a.publication_time));
-        chosen = entries[0];
+      var candidates = data.filter(function (it) {
+        if (!it || !it.publication_time) return false;
+        var p = parsePublication(it.publication_time);
+        return it.name === selectedName && p && p.date === selectedDate;
+      });
+
+      // Choose the best matching candidate:
+      // - if the user provided a time -> pick the candidate with the closest HH:MM
+      // - otherwise -> pick the most recent (max publication_time)
+      var chosen = null;
+      if (candidates.length > 0) {
+        function hmToMinutes(hm) {
+          if (!hm) return null;
+          var parts = hm.split(':');
+          if (parts.length < 2) return null;
+          var hh = parseInt(parts[0], 10);
+          var mm = parseInt(parts[1], 10);
+          if (isNaN(hh) || isNaN(mm)) return null;
+          return hh * 60 + mm;
+        }
+
+        if (selectedTime) {
+          var targetMin = hmToMinutes(selectedTime);
+          var bestDiff = Infinity;
+          for (var i = 0; i < candidates.length; i++) {
+            var parsed = parsePublication(candidates[i].publication_time);
+            var pubHM = (parsed && parsed.hm) ? parsed.hm : '';
+            var pubMin = hmToMinutes(pubHM);
+            if (pubMin === null) continue;
+            var diff = Math.abs(pubMin - targetMin);
+            if (diff === 0) { chosen = candidates[i]; break; }
+            if (diff < bestDiff) { bestDiff = diff; chosen = candidates[i]; }
+          }
+        }
+
+        if (!chosen) {
+          // pick the candidate with the largest (latest) publication_time string
+          chosen = candidates.reduce(function (a, b) {
+            return (a.publication_time > b.publication_time) ? a : b;
+          }, candidates[0]);
+        }
       }
-
-  const capacity = Number(chosen.total) || 0;
-  const free = Number(chosen.free) || 0;
-  // number of points = total - occupied (= free)
-  const numPoints = Math.max(0, free);
-
-  // Update UI count
-  if (carCountEl) carCountEl.textContent = String(numPoints);
-
-  // start simulation with number of points = free spots
-  startPointsSimulation(numPoints);
+      if (chosen) {
+        // if the chosen record indicates the parkhaus is closed (status == 2), redirect to closed page
+        if (Number(chosen.status) === 2) {
+          window.location.href = 'closed.html';
+          return; // stop further initialization
+        }
+        var total = Number(chosen.total) || 0;
+        var free = Number(chosen.free) || 0;
+        var occupied = Math.max(0, total - free);
+        enemyCount = Math.min(MAX_ENEMIES, occupied);
+        // update UI count if element exists
+        var carCountEl = document.getElementById('carCount');
+        if (carCountEl) carCountEl.textContent = occupied;
+        // show matched timestamp + occupied in the game UI for easier debugging
+        var matchedEl = document.getElementById('matchedInfo');
+        if (matchedEl) {
+            matchedEl.textContent = occupied;
+        }
+      }
+      // initialize game (points creation uses enemyCount)
+      init();
+      // draw initial frame
+      requestAnimationFrame(update);
     })
-    .catch(err => {
-      console.error(err);
-      alert('Fehler beim Laden der Daten');
+    .catch(function (err) {
+      console.error('Fehler beim Laden der Parkhausdaten', err);
+      // still initialize with defaults
+      init();
+      requestAnimationFrame(update);
     });
 });
 
-function startPointsSimulation(numPoints) {
-  const canvas = document.getElementById('gameCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+// Initialisierung
+function init() {
+  player = { x: canvas.width / 20, y: canvas.height / 5, radius: 20 };
+  enemies = [];
 
-  const startBtn = document.getElementById('startGameBtn');
-  const restartBtn = document.getElementById('restartBtn');
-  const carCountEl = document.getElementById('carCount');
-  const backToDateBtn = document.getElementById('backToDateBtn');
+  // enemyCount is determined from the selected parkhaus data (total - free)
+  enemyCount = Math.max(0, Math.min(MAX_ENEMIES, Number(enemyCount) || 0));
+  gameOver = false;
+  gameWin = false;
+  gameRunning = false;
+  timeLeft = 30;
+  mouseX = player.x;
+  mouseY = player.y;
+  startTime = null;
+  survivedTime = 0;
 
-  // clamp numbers for performance
-  const MAX_POINTS = 200;
-  const pointCount = Math.min(numPoints, MAX_POINTS);
-
-  let points = [];
-
-  const player = { x: canvas.width / 2, y: canvas.height / 2, r: 10 };
-  let running = false;
-  let rafId = null;
-
-  function makePoint(type) {
-    const speed = 0.3 + Math.random() * 1.0;
-    return {
+  for (let i = 0; i < enemyCount; i++) {
+    enemies.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * speed,
-      vy: (Math.random() - 0.5) * speed,
-      r: 6,
-      type
-    };
+      radius: 20,
+      dx: (Math.random() - 0.5) * ENEMY_SPEED,
+      dy: (Math.random() - 0.5) * ENEMY_SPEED
+    });
   }
+}
 
-  function init() {
-    points = [];
-    for (let i = 0; i < pointCount; i++) points.push(makePoint('free'));
-    if (carCountEl) carCountEl.textContent = String(pointCount);
-  }
+// Mausbewegung
+canvas.addEventListener("mousemove", e => {
+  const rect = canvas.getBoundingClientRect();
+  
+  // Mausposition korrekt berechnen, inkl. Header-Padding
+  mouseX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+  mouseY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+});
 
-  function update() {
-  const all = points;
-    for (const p of all) {
-      p.x += p.vx;
-      p.y += p.vy;
-      // bounce
-      if (p.x < p.r) { p.x = p.r; p.vx *= -1; }
-      if (p.x > canvas.width - p.r) { p.x = canvas.width - p.r; p.vx *= -1; }
-      if (p.y < p.r) { p.y = p.r; p.vy *= -1; }
-      if (p.y > canvas.height - p.r) { p.y = canvas.height - p.r; p.vy *= -1; }
-      // jitter
-      p.vx += (Math.random() - 0.5) * 0.08;
-      p.vy += (Math.random() - 0.5) * 0.08;
-      // clamp speed
-      const sp = Math.hypot(p.vx, p.vy);
-      const maxSp = 1.8;
-      if (sp > maxSp) { p.vx = (p.vx / sp) * maxSp; p.vy = (p.vy / sp) * maxSp; }
+
+// Timer
+function startTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    if (!gameOver && gameRunning) {
+      timeLeft--;
+      timerDisplay.textContent = "Zeit: " + formatTime(timeLeft);
+
+      if (timeLeft <= 0) {
+        gameWin = true;            // Spieler hat gewonnen
+        gameOver = true;
+        gameRunning = false;
+        survivedTime = 30;
+        clearInterval(timer);
+        showGameOver();            // Overlay anzeigen
+      }
     }
+  }, 1000);
+}
 
-    // collision with player
-    for (const p of all) {
-      const dx = p.x - player.x;
-      const dy = p.y - player.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < p.r + player.r) {
-        // collision -> stop
-        running = false;
-        cancelAnimationFrame(rafId);
-        // show overlay simple
-        showCollision();
-        return;
+// Spieler zeichnen
+function drawPlayer(player) {
+  const width = player.radius * 2;
+  const height = player.radius * 1.0;
+  ctx.drawImage(playerImg, player.x - width / 2, player.y - height / 2, width, height);
+}
+
+// Gegner zeichnen
+function drawEnemy(enemy) {
+  const width = enemy.radius * 2;
+  const height = enemy.radius * 1.0;
+  ctx.drawImage(enemyImg, enemy.x - width / 2, enemy.y - height / 2, width, height);
+}
+
+// Update & Render
+function update(timestamp) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Hintergrund
+  ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+  if (gameRunning) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+
+    player.x = mouseX;
+    player.y = mouseY;
+    drawPlayer(player);
+
+    for (let enemy of enemies) {
+      enemy.x += enemy.dx;
+      enemy.y += enemy.dy;
+
+      if (enemy.x < enemy.radius || enemy.x > canvas.width - enemy.radius) enemy.dx *= -1;
+      if (enemy.y < enemy.radius || enemy.y > canvas.height - enemy.radius) enemy.dy *= -1;
+
+      drawEnemy(enemy);
+
+      // Kollision prüfen
+      if (elapsed > invincibleTime) {
+        const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+        if (dist < player.radius + enemy.radius) {
+          gameOver = true;
+          gameRunning = false;
+          survivedTime = Math.floor((timestamp - startTime) / 1000);
+          clearInterval(timer);
+          showGameOver();
+        }
       }
     }
   }
 
-  function draw() {
-    // clear
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // background
-    ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // points (free spots)
-    for (const p of points) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = '#4caf50'; ctx.fill();
-    }
-
-    // player
-    ctx.beginPath(); ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2); ctx.fillStyle = '#2196f3'; ctx.fill();
-  }
-
-  function frame() {
-    if (!running) return;
-    update();
-    draw();
-    rafId = requestAnimationFrame(frame);
-  }
-
-  function showCollision() {
-    // simple alert for now
-    alert('Berührung! Spiel beendet.');
-  }
-
-  // mouse move controls player
-  canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    player.x = e.clientX - rect.left;
-    player.y = e.clientY - rect.top;
-  });
-
-  startBtn.addEventListener('click', () => {
-    if (running) return;
-    running = true;
-    init();
-    rafId = requestAnimationFrame(frame);
-  });
-
-  restartBtn.addEventListener('click', () => {
-    running = false;
-    cancelAnimationFrame(rafId);
-    init();
-    running = true;
-    rafId = requestAnimationFrame(frame);
-  });
-
-  if (backToDateBtn) {
-    backToDateBtn.addEventListener('click', () => {
-      // go back to the date/time picker (index.html)
-      window.location.href = 'index.html';
-    });
-  }
-
-  // initialize
-  init();
+  requestAnimationFrame(update);
 }
+
+// Game Over Overlay anzeigen
+function showGameOver() {
+  survivedTimeDisplay.textContent = formatTime(survivedTime);
+  const overlay = document.getElementById("gameOverScreen");
+  const title = document.querySelector("#gameOverWindow h1");
+  const message = document.querySelector("#gameOverWindow p");
+
+  if(gameWin){
+    title.textContent = "Gewonnen!";
+    message.textContent = "Du hast " + formatTime(survivedTime) + " Sekunden überlebt.";
+  } else {
+    title.textContent = "Unfall!!";
+    message.textContent = formatTime(survivedTime) + " Sekunden bis zum Zusammenprall.";
+  }
+
+  overlay.style.display = "flex";
+}
+
+// Startbutton
+startGameBtn.addEventListener("click", () => {
+  // assume init() already called after data load; only start running
+  gameRunning = true;
+  gameOver = false;
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("gameOverScreen").style.display = "none";
+  startTimer();
+});
+
+// Wiederholen Button
+restartBtn.addEventListener("click", () => {
+  init();
+  document.getElementById("gameOverScreen").style.display = "none";
+  document.getElementById("startScreen").style.display = "flex";
+});
+
+// Spiel wird nach dem Laden der Parkhausdaten initialisiert (siehe DOMContentLoaded handler)

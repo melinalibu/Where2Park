@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Parkhaus geschlossen</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="gameHeader">
+    <h1 id="siteTitle">Where2Park</h1>
+  </header>
+
+  <main class="closedMain">
+    <h2>Dieses Parkhaus ist derzeit geschlossen.</h2>
+    <p>Bitte wähle ein anderes Datum </p>
+    <button id="backToDate" class="btn mt18">Zur Datumsauswahl</button>
+  </main>
+
+  <script>
+    // header click -> datum_waehlen
+    var headerTitle = document.getElementById('siteTitle');
+    if (headerTitle) { headerTitle.style.cursor = 'pointer'; headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; }); }
+    var b = document.getElementById('backToDate');
+    if (b) b.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
+  </script>
+</body>
+</html>

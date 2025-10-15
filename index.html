@@ -1,20 +1,35 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Datum & Uhrzeit auswählen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where2Park</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <h1>Wähle Datum und Uhrzeit</h1>
+<body class="index">
 
-  <label for="dateInput">Datum:</label>
-  <input type="date" id="dateInput"><br><br>
+  <!-- HEADER -->
+  <header id="gameHeader">
+    <h1 id="siteTitle">Where2Park</h1>
+  </header>
 
-  <label for="timeInput">Uhrzeit:</label>
-  <input type="time" id="timeInput"><br><br>
+  <main>
+    <div class="infoBox">
+      <p> Wähle zuerst ein Datum aus und entscheide dich dann für ein Parkhaus in der Stadt Basel. Sobald du startest, gilt: 
+      Weiche den anderen Autos aus und versuche, so lange wie möglich zu überleben! <br><br>
+      Viel Erfolg – und fahr vorsichtig!</p>
+      <div class="centered">
+        <button id="toDateBtn" class="btn">Los</button>
+      </div>
+    </div>
+  </main>
 
-  <button id="confirmBtn">Weiter</button>
-
-  <script src="/js/script.js"></script>
+  <script>
+    document.getElementById('toDateBtn').addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
+    var headerTitle = document.getElementById('siteTitle');
+    if (headerTitle) headerTitle.style.cursor = 'pointer';
+    if (headerTitle) headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
+  </script>
 </body>
 </html>

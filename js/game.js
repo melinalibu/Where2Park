@@ -23,6 +23,8 @@ backgroundImg.src = "/img/back_park.png";
 
 // Spielvariablen
 let player, enemies, enemyCount = 0, gameOver, gameWin, timeLeft, mouseX, mouseY, timer, gameRunning;
+// store the selected parkhaus name so it can be shown on the win screen
+let selectedParkhausName = '';
 let startTime, invincibleTime = 1000; // 1 Sekunde Schutzzeit
 let survivedTime = 0;
 const MAX_ENEMIES = 600;
@@ -35,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedDate = params.get('date');
   const selectedTime = params.get('time');
   const selectedName = params.get('name');
+  if (selectedName) selectedParkhausName = selectedName;
 
   const parkhausLabel = document.getElementById('parkhausName');
   if (parkhausLabel && selectedName) parkhausLabel.textContent = selectedName;
@@ -99,6 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       if (chosen) {
+        // prefer the actual chosen record name if available
+        if (chosen.name) selectedParkhausName = chosen.name;
         // if the chosen record indicates the parkhaus is closed (status == 2), redirect to closed page
         if (Number(chosen.status) === 2) {
           window.location.href = 'closed.html';
@@ -250,8 +255,12 @@ function showGameOver() {
   const message = document.querySelector("#gameOverWindow p");
 
   if(gameWin){
-    title.textContent = "Gewonnen!";
-    message.textContent = "Du hast " + formatTime(survivedTime) + " Sekunden überlebt.";
+    title.textContent = "Glückwunsch!";
+    // include the selected parkhaus name if available
+    if (selectedParkhausName) {
+      message.textContent = "Du hast einen Parkplatz im Parkhaus " + selectedParkhausName + " gefunden!";
+    }
+    
   } else {
     title.textContent = "Unfall!!";
     message.textContent = formatTime(survivedTime) + " Sekunden bis zum Zusammenprall.";

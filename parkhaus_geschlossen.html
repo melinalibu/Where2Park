@@ -6,23 +6,31 @@
   <title>Parkhaus geschlossen</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="index">
   <header id="gameHeader">
     <h1 id="siteTitle">Where2Park</h1>
   </header>
 
   <main class="closedMain">
-    <h2>Dieses Parkhaus ist derzeit geschlossen.</h2>
-    <p>Bitte wähle ein anderes Datum </p>
-    <button id="backToDate" class="btn mt18">Zur Datumsauswahl</button>
+    <div class="date-picker-wrapper" style="margin: 0 auto;">
+  <div class="panel-title">Dieses Parkhaus ist geschlossen!</div>
+
+      <div id="closedMessage" style="color: #fff; text-align: center; width: 80%;">
+        <p class="panel-subtext">Bitte wähle ein anderes Datum.</p>
+      </div>
+
+      <button id="restartBtn" class="mt18" aria-label="Zur Datumsauswahl">
+        <img id="icon_Restart" src="img/icon_Restart.png" alt="Zur Datumsauswahl" />
+      </button>
+    </div>
   </main>
 
   <script>
-    // header click -> datum_waehlen
-    var headerTitle = document.getElementById('siteTitle');
-    if (headerTitle) { headerTitle.style.cursor = 'pointer'; headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; }); }
-    var b = document.getElementById('backToDate');
-    if (b) b.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
+  // header click -> datum_waehlen
+  var headerTitle = document.getElementById('siteTitle');
+  if (headerTitle) { headerTitle.style.cursor = 'pointer'; headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; }); }
+  var restart = document.getElementById('restartBtn');
+  if (restart) restart.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
   </script>
 </body>
 </html>

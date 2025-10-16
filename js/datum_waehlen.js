@@ -57,11 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Container
         const container = document.createElement('div');
         container.id = 'datePickerContainer';
-        container.style.maxWidth = '760px';
+        container.style.maxWidth = '600px';
         container.style.margin = '36px auto';
         container.style.padding = '18px';
         container.style.background = 'rgba(255,255,255,0.95)';
-        container.style.border = '1px solid rgba(0,0,0,0.06)';
         container.style.borderRadius = '12px';
         container.style.display = 'flex';
         container.style.gap = '12px';
@@ -75,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
         dateInput.type = 'date';
         dateInput.id = 'dateInput';
         dateInput.style.padding = '8px 10px';
-        dateInput.style.fontSize = '16px';
+        dateInput.style.fontSize = '26px';
+        dateInput.style.fontWeight = '700';
 
         // set min/max based on available dates (if present)
         if (dates.length > 0) {
@@ -90,7 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
         timeInput.type = 'time';
         timeInput.id = 'timeInput';
         timeInput.style.padding = '8px 10px';
-        timeInput.style.fontSize = '16px';
+        timeInput.style.fontSize = '26px';
+        timeInput.style.fontWeight = '700';
+        
         timeInput.setAttribute('list', 'timeSuggestions');
         timeInput.setAttribute('step', '60'); // minute granularity
 
@@ -105,12 +107,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Confirm button (requires both date and time)
         const confirmBtn = document.createElement('button');
-        confirmBtn.id = 'confirmDateBtn';
-        confirmBtn.textContent = 'Bestätigen';
-        confirmBtn.style.padding = '8px 14px';
-        confirmBtn.style.fontWeight = '700';
-        confirmBtn.className = 'btn';
-        confirmBtn.disabled = true;
+    confirmBtn.id = 'confirmDateBtn';
+    confirmBtn.className = 'btn';
+    confirmBtn.disabled = true;
+    // replace button label with confirm image
+    const confirmImg = document.createElement('img');
+        confirmImg.src = 'img/confirm_date.png';
+        confirmImg.alt = 'Bestätigen';
+        confirmImg.style.height = '56px';
+        confirmImg.style.width = 'auto';
+        confirmImg.style.display = 'block';
+        // fallback: if relative path fails (e.g. opened via file://), try absolute path
+        confirmImg.onerror = function () {
+            if (confirmImg.src.indexOf('/img/confirm_date.png') === -1) {
+                confirmImg.src = '/img/confirm_date.png';
+            } else {
+                // final fallback: show text so user can still click
+                confirmImg.style.display = 'none';
+                confirmBtn.textContent = 'Bestätigen';
+            }
+        };
+        confirmBtn.appendChild(confirmImg);
 
         function updateConfirmState() {
             const dateVal = dateInput.value;
@@ -138,10 +155,16 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(confirmBtn);
     container.appendChild(timeDatalist);
 
-        // Inject at top (after header if present)
-        const header = document.getElementById('gameHeader');
-        if (header && header.parentNode) header.parentNode.insertBefore(container, header.nextSibling);
-        else document.body.prepend(container);
+        // Inject into the wrapper div if present so CSS can style it; otherwise
+        // fall back to inserting after the header or at the top of the body.
+        const wrapper = document.getElementById('datePickerWrapper');
+        if (wrapper) {
+            wrapper.appendChild(container);
+        } else {
+            const header = document.getElementById('gameHeader');
+            if (header && header.parentNode) header.parentNode.insertBefore(container, header.nextSibling);
+            else document.body.prepend(container);
+        }
 
         // Prefill the date with today's date if possible; otherwise pick nearest allowed date.
         const pad = n => String(n).padStart(2, '0');

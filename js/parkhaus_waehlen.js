@@ -19,6 +19,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return;
   }
+  
+  // --- Hover label for images: show parkhaus name near cursor ---
+  function createHoverLabel() {
+    let label = document.getElementById('parkhausHoverLabel');
+    if (!label) {
+      label = document.createElement('div');
+      label.id = 'parkhausHoverLabel';
+      label.className = 'hover-name';
+      document.body.appendChild(label);
+    }
+    return label;
+  }
+
+  const hoverLabel = createHoverLabel();
+
+  function attachHoverHandlersToImg(imgEl, name) {
+    if (!imgEl) return;
+    imgEl.addEventListener('mouseenter', (e) => {
+      hoverLabel.textContent = name || imgEl.alt || '';
+      hoverLabel.style.display = 'block';
+      // position initially
+      hoverLabel.style.left = (e.clientX + 12) + 'px';
+      hoverLabel.style.top = (e.clientY + 12) + 'px';
+    });
+    imgEl.addEventListener('mousemove', (e) => {
+      hoverLabel.style.left = (e.clientX + 12) + 'px';
+      hoverLabel.style.top = (e.clientY + 12) + 'px';
+    });
+    imgEl.addEventListener('mouseleave', () => {
+      hoverLabel.style.display = 'none';
+    });
+  }
 
   if (infoEl) infoEl.textContent = 'Parkhäuser für ' + selectedDate;
 
@@ -109,6 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           staticImg.style.cursor = 'pointer';
 
+          // attach hover label handlers
+          attachHoverHandlersToImg(staticImg, name);
+
           // no captions: we intentionally don't create caption elements here
         } else {
           // If static images are not present, create a clickable gallery item
@@ -126,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           item.appendChild(thumb);
           gallery.appendChild(item);
+
+          // attach hover handlers to generated thumb
+          attachHoverHandlersToImg(thumb, name);
         }
       }
     })

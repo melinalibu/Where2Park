@@ -7,7 +7,7 @@ body {
   justify-content: flex-start;
   height: 100vh;
   overflow: hidden;
-  background: white;
+  background-color: white; /* nur Farbe, kein Hintergrundbild */
   font-family: "DIN Condensed";
 }
 
@@ -113,7 +113,7 @@ font-size: 90px;
 #startWindow {
   width: 498px;
   height: 484px;
-  background: #13388F;
+  background: #13388F;  
   border-radius: 63px;
   display: flex;
   flex-direction: column;
@@ -127,9 +127,9 @@ font-size: 90px;
 
 /* Startbutton */
 #startGameBtn {
-  margin-top: 20px;
+  margin-top: 80px;
   padding: 12px 24px;
-  font-size: 24px;
+  font-size: 26px;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -142,6 +142,21 @@ font-size: 90px;
 #startGameBtn:hover {
   background-color: #e0e0e0;
 }
+
+/* Primary button style reused across panels (matches #startGameBtn) */
+.btn-primary {
+  margin-top: 80px;
+  padding: 12px 24px;
+  font-size: 26px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #FFF;
+  color: #13388F;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.btn-primary:hover { background-color: #e0e0e0; }
 /* Game Over Screen overlay */
 #gameOverScreen {
   position: fixed;
@@ -274,6 +289,15 @@ body.parkwahl {
 }
 
 
+/* Startseite */
+
+/* Hintergrund Startseite  */
+body.index {
+  background: url("/img/hintergrund2.png") no-repeat center center fixed;
+  background-size: cover;    /* Bild füllt den gesamten Bildschirm */
+  background-color: white;   /* Fallback-Farbe, falls Bild nicht geladen wird */
+}
+
 .infoBox {
   width: 1126px;
   height: 503px;
@@ -322,9 +346,173 @@ body.parkwahl {
   color: #13388F;        /* Text wird blau */
 }
 
-body.index {
-  background: url("..img/image2.png") no-repeat center center fixed;
-  background-size: cover;   /* Bild wird skaliert, sodass es den ganzen Bildschirm ausfüllt */
-  margin: 0;
-  padding: 0;
+  /* Hover label for parkhaus selection (floating near cursor) */
+  .hover-name {
+    position: fixed;
+    display: none;
+    pointer-events: none;
+    background: rgba(255,255,255,0.95);
+    color: #13388F;
+    border: 2px solid #13388F;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-family: "DIN Condensed", sans-serif;
+    font-size: 22px;
+    z-index: 250;
+    white-space: nowrap;
+  }
+
+
+
+/* Datum-Wählen-Seite */
+
+/*  Hintergrund für Datum-Wählen-Seite  */
+body.datum {
+  background: url("../img/hintergrund2.png") no-repeat center center fixed;
+  background-size: cover; 
 }
+
+.date-picker-wrapper {
+  background-color:#13388F;
+  width: 498px;
+  height: 484px;
+  flex-shrink: 0;
+  border-radius: 63px;
+  box-sizing: border-box;
+
+  /* more space above the title: larger top padding */
+  padding: 56px 36px 24px; /* top right/left bottom */
+  position: fixed;      /* position relative to viewport */
+  left: 50%;
+  /* shift down by half the header height to visually center below the fixed header (header height ~122px) */
+  top: calc(50% + 61px);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column; /* stack title, triangle, then picker vertically */
+  align-items: center;     /* center horizontally */
+  justify-content: center; /* center vertically */
+  gap: 8px;
+  z-index: 40; /* keep it under the header (header has z-index:50) */
+}
+
+/* Title inside the wrapper */
+/* date-picker-title removed in favor of .panel-title (shared across panels) */
+
+/* Subtext used under date-picker titles (start screens, messages) */
+.date-picker-subtext {
+  color: white;
+  font-family: "DIN Condensed", sans-serif;
+  font-size: 30px; /* match the size used on datum_waehlen */
+  text-align: center;
+  margin: 0;
+}
+
+/* Start window title/subtext (same visual style as date-picker, but name relates to Start) */
+.start-title {
+  font-family: "DIN Condensed", sans-serif;
+  color: white;
+  font-size: 96px;
+  font-weight: 700;  
+  text-align: center;
+  margin-bottom: 50px;
+  margin-top: 30px;
+  width: 100%;
+}
+.start-subtext {
+  color: white;
+  font-family: "DIN Condensed", sans-serif;
+  font-size: 30px;
+  margin-top: 30;
+  text-align: center;
+  margin: 0;
+}
+
+/* General panel utilities to keep title/subtext sizes consistent across pages */
+.panel-title {
+  font-family: "DIN Condensed", sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 50px;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+.panel-subtext {
+  font-family: "DIN Condensed", sans-serif;
+  font-size: 30px;
+  text-align: center;
+  margin: 0;
+}
+
+/* small white triangle pointing down under the title */
+.date-picker-triangle {
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-top: 70px solid #fff; /* larger elongated white tip */
+  margin: 0 auto 10px auto;
+}
+
+/* Date/time input boxes inside the generated picker container */
+/* override inline background/padding set by JS so the area between boxes stays the wrapper color */
+#datePickerContainer {
+  display: flex;          /* stack inputs vertically */
+  flex-direction: column;
+  align-items: stretch;   /* make children expand to full width */
+  gap: 15px;
+  padding: 0 !important; /* remove JS-inlined padding */
+  background: transparent !important; /* ensure no white background between boxes */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#datePickerContainer input[type="date"],
+#datePickerContainer input[type="time"] {
+  background: #fff;           /* white box */
+  border-radius: 30px;        /* requested rounded corners */
+  padding: 12px 16px;         /* comfortable inner spacing */
+  font-size: 16px;
+  height: 45px;
+  box-sizing: border-box;
+  width: 100%;                /* full width when stacked */
+  text-align: center;        /* center the text inside the white boxes */
+  color: #13388F;            /* blue text to match design */
+  -webkit-text-fill-color: #13388F; /* iOS/Safari fallback */
+}
+
+/* placeholder color (and vendor fallbacks) */
+#datePickerContainer input::placeholder { color: rgba(19,56,143,0.75); }
+#datePickerContainer input::-webkit-input-placeholder { color: rgba(19,56,143,0.75); }
+#datePickerContainer input:-ms-input-placeholder { color: rgba(19,56,143,0.75); }
+
+/* make sure the datalist element doesn't interfere visually */
+#datePickerContainer datalist { display: none; }
+
+/* Confirm image button inside picker */
+#datePickerContainer button#confirmDateBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#datePickerContainer button#confirmDateBtn img {
+  height: 10px; /* confirm icon height */
+  display: block;
+  margin-top: 0;   /* move icon up so it sits well inside the blue wrapper */
+  margin-bottom: 20px;
+  align-self: center;
+}
+/* dim the image when button disabled */
+#datePickerContainer button#confirmDateBtn:disabled img {
+  opacity: 0.45;
+}
+
+
+
+
+
+

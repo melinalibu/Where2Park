@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Where2Park</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where2Park</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="datum">
 
-     <!-- HEADER -->
+  <!-- HEADER -->
   <header id="gameHeader">
     <h1>Where2Park</h1>
   </header>
 
-    <!-- date/time picker script (only once) -->
-    <script src="/js/datum_waehlen.js"></script>
+  <!-- Wrapper für styling -->
+  <div id="datePickerWrapper" class="date-picker-wrapper">
+  <div class="panel-title">Ankunftszeit</div>
+    <div class="date-picker-triangle" aria-hidden="true"></div>
+  </div>
+
+  
+  <!-- SCRIPT -->
+  <script src="/js/datum_waehlen.js"></script>
 </body>
 </html>

@@ -24,8 +24,8 @@
  <!-- STARTSCREEN -->
 <div id="startScreen">
   <div id="startWindow">
-    <h1>Escape Game</h1>
-    <p>Klicke auf Start, um zu spielen!</p>
+    <h1 class="panel-title">Parkplatz wählen</h1>
+  <p class="panel-subtext">Weiche den gegnerischen Autos 30sek aus, <br> um das Spiel zu gewinnen.</p>
     <button id="startGameBtn">Start</button>
   </div>
 </div>
@@ -36,8 +36,9 @@
     <h1>Unfall!!</h1>
     <p><span id="survivedTimeDisplay">00:00</span> Sekunden bis zum Zusammenprall.</p>
     <button id="restartBtn">
-  <img id="icon_Restart" src="img/icon_Restart.png" alt="Restart">
-</button>
+      <img id="icon_Restart" src="img/icon_Restart.png" alt="Restart">
+    </button>
+    <button id="backToDateBtn" class="btn-primary">Zurück zur Datumswahl</button>
 
   <script src="js/game.js"></script>
   <script>
@@ -48,6 +49,11 @@
         headerTitle.style.cursor = 'pointer';
         headerTitle.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
       }
+    })();
+    // Back to date button on Game Over
+    (function(){
+      var backBtn = document.getElementById('backToDateBtn');
+      if (backBtn) backBtn.addEventListener('click', function(){ window.location.href = 'datum_waehlen.html'; });
     })();
   </script>
 </body>

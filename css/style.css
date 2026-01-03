@@ -41,7 +41,7 @@ Header {
   top: 0;                    
   left: 0;                   
   width: 100vw;              
-  height: 122px;             
+  height: 13%;             
   background-color: #13388F; 
   display: flex;
   align-items: center;
@@ -227,13 +227,27 @@ margin: 0;
 
 /* === HINTERGRUND NUR FÜR Parkhaus_Wahl-SEITE === */
 body.parkwahl {
-  /* use absolute path so CSS resolves image correctly regardless of CSS file location */
-  background: url("/img/hintergrund.png") no-repeat center top;
-  background-size: 100% auto;   /* Breite = Bildschirm, Höhe proportional */
-  background-color: white;       /* Balken oben/unten, falls nötig */
+  /* page layout for parkhaus selection; background image is placed via .park-background element now */
+  background-color: white;
   height: 100vh;
   margin: 0;
   padding: 0;
+}
+
+.park-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0; /* sits behind the parkhaus images which may have higher z-index */
+}
+
+.park-background img {
+  position: relative; /* specified by user */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ensure it fills the area proportionally */
+  display: block;
 }
 
 /* hide captions on the parkhaus selection page (they are shown on the start page only) */
@@ -255,38 +269,39 @@ body.parkwahl {
 
 /* Positionen anpassen */
 #parkhaus1 {
-  top: 200px;         /* Abstand vom oberen Rand */
-  left: 150px;        /* Abstand vom linken Rand */
-  width: auto;       /* Breite anpassen */
-  height: auto;       /* Höhe proportional */
+  top: 23%;         /* Abstand vom oberen Rand */
+  left: 10%;        /* Abstand vom linken Rand */
+  width: 15%;       /* Breite anpassen */
+  height: 20%;       /* Höhe proportional */
 }
 
 #parkhaus2 {
-  bottom:  200px;
-  left: 220px;       /* Abstand vom rechten Rand */
-  width: auto;       /* Breite anpassen */
-  height: auto;       /* Höhe proportional */
+  bottom:  2%;
+  left: 5%;       /* Abstand vom rechten Rand */
+  width: 20%;       /* Breite anpassen */
+  height: 25%;       /* Höhe proportional */
 }
 
 #parkhaus3 {
-  bottom: 160px;
-  right: 190px;
-  width: 400px;   /* größere Breite */
-  height: 300px;   /* Höhe proportional zur Breite */
+  bottom: 20%;
+  right: 16%;
+  width: 20%;   /* größere Breite */
+  height: 25%;   /* Höhe proportional zur Breite */
 }
 
 #parkhaus4 {
-  bottom: 220px;
-  right: 505px;
-  width: auto;       /* Breite anpassen */
-  height: auto;       /* Höhe proportional */
+  bottom: 33%;
+  right: 35%;
+  width: 20%;       /* Breite anpassen */
+  height: 20%;       /* Höhe proportional */
 }
 #parkhaus5 {
-  top:  160px;
-  right: 150px;
-  width: auto;       /* Breite anpassen */
-  height: auto;       /* Höhe proportional */
+  top:  20%;
+  right: 20%;
+  width: 15%;       /* Breite anpassen */
+  height: 20%;       /* Höhe proportional */
 }
+
 
 
 /* Startseite */
@@ -511,6 +526,193 @@ body.datum {
   opacity: 0.45;
 }
 
+/* --- dein bestehender Desktop CSS Code --- */
+/* ... (alles wie gehabt, unverändert) ... */
+
+
+/* ===========================================================
+   >>> Responsive Anpassungen (Mobile & Tablet) <<<
+   =========================================================== */
+
+/* Tablets (max 1024px) */
+@media (max-width: 1024px) {
+  /* Prevent any scrolling on mobile: lock viewport to 100vh and hide overflow */
+  html, body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Header remains on top */
+    height: 100vh; /* fixed viewport height prevents scrolling */
+    overflow: hidden; /* disable scrolling */
+    -webkit-overflow-scrolling: auto;
+  }
+
+  .infoBox {
+    width: 80%;
+    height: auto;
+    padding: 25px;
+    margin-top: 20px;
+  }
+
+  .infoBox p {
+    font-size: 36px;
+    max-width: 100%;
+  }
+
+  .infoBox .btn {
+    font-size: 32px;
+    width: 180px;
+    height: 45px;
+  }
+
+  canvas {
+    width: 90%;
+    height: auto;
+    border-radius: 30px;
+  }
+
+  #startWindow,
+  #gameOverWindow,
+  .date-picker-wrapper {
+    width: 80%;
+    height: auto;
+    padding: 30px 20px;
+    border-radius: 40px;
+  }
+
+  .panel-title {
+    font-size: 60px;
+  }
+
+  .panel-subtext {
+    font-size: 24px;
+  }
+}
+
+/* Mobile (max 768px) */
+@media (max-width: 768px) {
+  header {
+    height: 100px;
+  }
+
+  header h1 {
+    font-size: 40px;
+    border: 3px solid #fff;
+    padding: 8px 16px;
+  }
+
+  body {
+    padding-top: 110px;
+    overflow: auto;
+  }
+
+  .infoBox {
+    width: 90%;
+    height: auto;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+
+  .infoBox p {
+    font-size: 26px;
+    line-height: 1.4;
+    margin-bottom: 25px;
+  }
+
+  .infoBox .btn {
+    font-size: 24px;
+    width: 150px;
+    height: 40px;
+  }
+
+  /* Canvas kleiner und scrollbar machen */
+  canvas {
+    width: 95%;
+    height: auto;
+    border-radius: 25px;
+    border-width: 3px;
+  }
+
+  #startWindow,
+  #gameOverWindow,
+  .date-picker-wrapper {
+    width: 90%;
+    height: auto;
+    padding: 20px;
+    border-radius: 30px;
+  }
+
+  .panel-title {
+    font-size: 40px;
+    margin-top: 30px;
+  }
+
+  .panel-subtext {
+    font-size: 20px;
+  }
+
+  /* Parkhaus Bilder proportional kleiner */
+  #parkhaus1, #parkhaus2, #parkhaus3, #parkhaus4, #parkhaus5 {
+    width: 25%;
+    height: auto;
+  }
+
+  #timerDisplay,
+  #parkhausName {
+    font-size: 18px;
+    top: -25px;
+  }
+
+  .date-picker-subtext,
+  .start-subtext {
+    font-size: 20px;
+  }
+
+  .start-title {
+    font-size: 50px;
+  }
+}
+
+
+
+/* Sehr kleine Smartphones (max 480px) */
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 28px;
+  }
+
+  .infoBox p {
+    font-size: 20px;
+  }
+
+  .infoBox .btn {
+    font-size: 20px;
+    width: 130px;
+    height: 36px;
+  }
+
+  .panel-title {
+    font-size: 32px;
+  }
+
+  .panel-subtext {
+    font-size: 18px;
+  }
+
+  #startWindow,
+  #gameOverWindow,
+  .date-picker-wrapper {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .date-picker-triangle {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 40px solid #fff;
+  }
+}
 
 
 

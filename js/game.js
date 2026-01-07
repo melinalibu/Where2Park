@@ -13,6 +13,14 @@ function formatTime(seconds) {
   return String(mins).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
 }
 
+// helper to update matchedInfo element with a labeled count
+function setMatchedCount(n) {
+  var el = document.getElementById('matchedInfo');
+  if (!el) return;
+  var safe = (typeof n === 'number' && !isNaN(n)) ? n : 0;
+  el.innerHTML = '<span class="matchedLabel">Anzahl Autos:</span> <span class="matchedCount">' + safe + '</span>';
+}
+
 // Bilder
 const playerImg = new Image();
 playerImg.src = "/img/player.png";
@@ -25,6 +33,9 @@ backgroundImg.src = "/img/back_park.png";
 let player, enemies, enemyCount = 0, gameOver, gameWin, timeLeft, mouseX, mouseY, timer, gameRunning;
 // store the selected parkhaus name so it can be shown on the win screen
 let selectedParkhausName = '';
+// touch / arrow movement state for mobile controls
+let moveState = { up: false, down: false, left: false, right: false };
+const TOUCH_MOVE_SPEED = 15; // px per frame when pressing arrows (adjusted to 20 as requested)
 let startTime, invincibleTime = 1000; // 1 Sekunde Schutzzeit
 let survivedTime = 0;
 const MAX_ENEMIES = 600;
@@ -118,19 +129,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (carCountEl) carCountEl.textContent = occupied;
         // show matched timestamp + occupied in the game UI for easier debugging
         var matchedEl = document.getElementById('matchedInfo');
-        if (matchedEl) {
-            matchedEl.textContent = occupied;
-        }
+        setMatchedCount(occupied);
       }
-      // initialize game (points creation uses enemyCount)
-      init();
-      // draw initial frame
-      requestAnimationFrame(update);
+  // initialize game (points creation uses enemyCount)
+  init();
+  // ensure matchedInfo reflects the (possibly updated) enemyCount
+  setMatchedCount(enemyCount);
+  // draw initial frame
+  requestAnimationFrame(update);
     })
     .catch(function (err) {
       console.error('Fehler beim Laden der Parkhausdaten', err);
+      // show zero if data couldn't be loaded
+      setMatchedCount(0);
       // still initialize with defaults
       init();
+      // update display with current enemyCount
+      setMatchedCount(enemyCount);
       requestAnimationFrame(update);
     });
 });
@@ -212,6 +227,11 @@ function update(timestamp) {
 
   // Hintergrund
   ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+  // apply touch-arrow movement to the mouse position so player follows arrows (always allowed)
+  if (moveState.up) mouseY = Math.max(0, mouseY - TOUCH_MOVE_SPEED);
+  if (moveState.down) mouseY = Math.min(canvas.height, mouseY + TOUCH_MOVE_SPEED);
+  if (moveState.left) mouseX = Math.max(0, mouseX - TOUCH_MOVE_SPEED);
+  if (moveState.right) mouseX = Math.min(canvas.width, mouseX + TOUCH_MOVE_SPEED);
 
   if (gameRunning) {
     if (!startTime) startTime = timestamp;
@@ -286,4 +306,30 @@ restartBtn.addEventListener("click", () => {
   document.getElementById("startScreen").style.display = "flex";
 });
 
+// Touch arrow controls (mobile): bind press/hold to moveState
+function bindArrowControl(buttonId, dir) {
+  const el = document.getElementById(buttonId);
+  if (!el) return;
+  const start = (e) => { e.preventDefault(); moveState[dir] = true; };
+  const stop = (e) => { if (e) e.preventDefault(); moveState[dir] = false; };
+  el.addEventListener('touchstart', start, { passive: false });
+  el.addEventListener('pointerdown', start);
+  el.addEventListener('mousedown', start);
+  el.addEventListener('touchend', stop);
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('mouseup', stop);
+  el.addEventListener('touchcancel', stop);
+  el.addEventListener('pointercancel', stop);
+  el.addEventListener('mouseleave', stop);
+}
+
+// attach controls when DOM is ready
+document.addEventListener('DOMContentLoaded', function(){
+  bindArrowControl('arrowUp','up');
+  bindArrowControl('arrowDown','down');
+  bindArrowControl('arrowLeft','left');
+  bindArrowControl('arrowRight','right');
+});
+
 // Spiel wird nach dem Laden der Parkhausdaten initialisiert (siehe DOMContentLoaded handler)
+

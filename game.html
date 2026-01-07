@@ -2,9 +2,11 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Where2Park</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 
 <body>
 
@@ -18,8 +20,19 @@
     <canvas id="gameCanvas" width="1338" height="748"></canvas>
       <div id="parkhausName">Parkhaus</div>
     <div id="timerDisplay">Zeit: 00:00</div>
+    <div id="AnzahlAutos">Anzahl Autos: </div>
     <div id="matchedInfo"></div>
   </div>
+
+    <!-- Mobile touch controls (arrows) -->
+    <div id="touchControls" class="touch-controls" aria-hidden="true">
+      <button id="arrowUp" class="arrow-btn" aria-label="Up">▲</button>
+      <div class="arrow-row">
+        <button id="arrowLeft" class="arrow-btn" aria-label="Left">◀</button>
+        <button id="arrowDown" class="arrow-btn" aria-label="Down">▼</button>
+        <button id="arrowRight" class="arrow-btn" aria-label="Right">▶</button>
+      </div>
+    </div>
 
  <!-- STARTSCREEN -->
 <div id="startScreen">
@@ -29,6 +42,7 @@
     <button id="startGameBtn">Start</button>
   </div>
 </div>
+
 
  <!-- GAME OVER SCREEN -->
 <div id="gameOverScreen">

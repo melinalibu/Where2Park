@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  padding-top: 140px; /* Header-Höhe + gewünschter Abstand */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,8 +13,10 @@ body {
 
 /* Canvas */
 canvas {
-  width: 1200px;  /* 80% von 1338 */
-  height: 598px;  /* 80% von 748 */
+  width: 90vw;       /* 90% der Bildschirmbreite */
+  max-width: 1200px; /* Desktop-Limit */
+  height: auto;      /* proportional */
+  max-height: 70vh;  /* auf Mobile nicht zu hoch */
   background: white;
   display: block;
   cursor: none;
@@ -31,12 +32,11 @@ canvas {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  margin-top: 50px;
+  margin-top: 12px; /* reduced gap to header */
 }
 
-
 /* Header */
-Header {
+header {
   position: fixed;           
   top: 0;                    
   left: 0;                   
@@ -49,27 +49,35 @@ Header {
   z-index: 50;               
 }
 
-
 /* Header Text */
-Header h1 {
-color: #FFF;
-font-family: "DIN Condensed";
-font-size: 90px;
-
+header h1 {
+  color: #FFF;
+  font-family: "DIN Condensed";
+  font-size: 90px;
   width: 603px;
   height: 96px;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
-  flex-shrink: 0;
+  align-items: center; /* fügt vertikale Zentrierung hinzu */
   border-radius: 23px;
   border: 6px solid #FFF;
+  margin: 0 auto;
+  box-sizing: border-box;
+  text-align: center;
+}
 
+/* Desktop: add a small gap between fixed header and page content */
+@media (min-width: 1025px) {
+  body {
+    /* increase padding-top slightly so content sits a bit lower under the fixed header */
+    padding-top: 170px;
+  }
+}
 
 /* utility layout helpers */
 .centered { text-align: center; margin-top: 12px; }
 .closedMain { padding: 160px 20px 20px; text-align: center; }
 .mt18 { margin-top: 18px; }
-}
 
 
 /* Timer */
@@ -93,6 +101,30 @@ font-size: 90px;
   color: #13388F;
   font-family: DIN Condensed, Arial, sans-serif;
   z-index: 20;
+}
+#matchedInfo {
+  position: absolute;
+  top: -13px; /* weiter oben für Desktop */
+  left: 600px;
+  transform: translate(-50%, -50%); /* exakte horizontale Zentrierung */
+  font-family: "DIN Condensed", sans-serif;
+  font-size: calc(90vw * 24 / 1338); /* proportional skalieren */
+  font-weight: bold;
+  color: #13388F;; /* Sichtbare Farbe */
+  text-align: center;
+  z-index: 20; /* gleiche Ebene wie Parkhaus & Timer */
+}
+#AnzahlAutos {
+  position: absolute;
+  top: -13px; /* weiter oben für Desktop */
+  left: 500px;
+  transform: translate(-50%, -50%); /* exakte horizontale Zentrierung */
+  font-family: "DIN Condensed", sans-serif;
+  font-size: calc(90vw * 24 / 1338); /* proportional skalieren */
+  font-weight: bold;
+  color: #13388F;; /* Sichtbare Farbe */
+  text-align: center;
+  z-index: 20; /* gleiche Ebene wie Parkhaus & Timer */
 }
 
 /* Startscreen overlay */
@@ -227,7 +259,6 @@ margin: 0;
 
 /* === HINTERGRUND NUR FÜR Parkhaus_Wahl-SEITE === */
 body.parkwahl {
-  /* page layout for parkhaus selection; background image is placed via .park-background element now */
   background-color: white;
   height: 100vh;
   margin: 0;
@@ -239,78 +270,43 @@ body.parkwahl {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 0; /* sits behind the parkhaus images which may have higher z-index */
+  z-index: 0;
 }
 
 .park-background img {
-  position: relative; /* specified by user */
+  position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ensure it fills the area proportionally */
+  object-fit: cover;
   display: block;
 }
 
-/* hide captions on the parkhaus selection page (they are shown on the start page only) */
-/* captions removed: no CSS needed */
-/* Parkhaus-Bilder auf Startseite */
-
 #parkhaus1, #parkhaus2, #parkhaus3, #parkhaus4, #parkhaus5 {
   position: absolute;
-  cursor: pointer;    /* optional: Mauszeiger zeigen, dass klickbar */
+  cursor: pointer;
+  width: auto;
+  height: auto;
 }
-/* Hover-Effekt: leicht vergrößern */
+
 #parkhaus1:hover,
 #parkhaus2:hover,
 #parkhaus3:hover,
 #parkhaus4:hover,
 #parkhaus5:hover {
-  transform: scale(1.1); /* 10% größer */
+  transform: scale(1.1);
 }
 
-/* Positionen anpassen */
-#parkhaus1 {
-  top: 23%;         /* Abstand vom oberen Rand */
-  left: 10%;        /* Abstand vom linken Rand */
-  width: 15%;       /* Breite anpassen */
-  height: 20%;       /* Höhe proportional */
-}
-
-#parkhaus2 {
-  bottom:  2%;
-  left: 5%;       /* Abstand vom rechten Rand */
-  width: 20%;       /* Breite anpassen */
-  height: 25%;       /* Höhe proportional */
-}
-
-#parkhaus3 {
-  bottom: 20%;
-  right: 16%;
-  width: 20%;   /* größere Breite */
-  height: 25%;   /* Höhe proportional zur Breite */
-}
-
-#parkhaus4 {
-  bottom: 33%;
-  right: 35%;
-  width: 20%;       /* Breite anpassen */
-  height: 20%;       /* Höhe proportional */
-}
-#parkhaus5 {
-  top:  20%;
-  right: 20%;
-  width: 15%;       /* Breite anpassen */
-  height: 20%;       /* Höhe proportional */
-}
-
-
+#parkhaus1 { top: 23%; left: 10%; width: 15%; height: auto; }
+#parkhaus2 { bottom: 2%; left: 5%; width: 20%; height: auto; }
+#parkhaus3 { bottom: 20%; right: 16%; width: 20%; height: auto; }
+#parkhaus4 { bottom: 33%; right: 35%; width: 20%; height: auto; }
+#parkhaus5 { top: 20%; right: 20%; width: 15%; height: auto; }
 
 /* Startseite */
-
-/* Hintergrund Startseite  */
 body.index {
   background: url("/img/hintergrund2.png") no-repeat center center fixed;
-  background-size: cover;    /* Bild füllt den gesamten Bildschirm */
-  background-color: white;   /* Fallback-Farbe, falls Bild nicht geladen wird */
+  background-size: cover;
+  background-color: white;
 }
 
 .infoBox {
@@ -318,17 +314,17 @@ body.index {
   height: 503px;
   margin-top: 30px;
   margin-bottom: 50px;
-  padding: 30px; /* mehr Abstand zwischen Text und Boxrand */
+  padding: 30px;
   border: 8px solid #13388F;
   border-radius: 33px;
   position: relative;
   z-index: 5;
 
-  display: flex;                /* aktiviert Flexbox */
-  flex-direction: column;       /* Elemente untereinander anordnen */
-  justify-content: center;      /* vertikal zentrieren */
-  align-items: center;          /* horizontal zentrieren */
-  text-align: center;           /* Text in der Mitte ausrichten */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .infoBox p {
@@ -337,13 +333,12 @@ body.index {
   font-size: 48px;
   font-style: normal;
   font-weight: 700;
-  line-height: 1.3;  /* besserer Zeilenabstand */
-  margin-bottom: 40px; /* Abstand zwischen Text und Button */
-  max-width: 900px; /* optional: Textbreite begrenzen */
+  line-height: 1.3;
+  margin-bottom: 40px;
+  max-width: 900px;
 }
 .infoBox .btn {
   background-color:#13388F;
-  
   width: 214px;
   height: 47px;
   border: 2px solid #13388F;
@@ -354,34 +349,34 @@ body.index {
   font-size: 40px;
   font-style: normal;
   font-weight: 700;
-  }
-
-  .btn:hover {
-  background: white;     /* Hintergrund wird weiss */
-  color: #13388F;        /* Text wird blau */
 }
 
-  /* Hover label for parkhaus selection (floating near cursor) */
-  .hover-name {
-    position: fixed;
-    display: none;
-    pointer-events: none;
-    background: rgba(255,255,255,0.95);
-    color: #13388F;
-    border: 2px solid #13388F;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-family: "DIN Condensed", sans-serif;
-    font-size: 22px;
-    z-index: 250;
-    white-space: nowrap;
-  }
+.btn:hover {
+  background: white;
+  color: #13388F;
+}
 
+.hover-name {
+  position: fixed;
+  display: none;
+  pointer-events: none;
+  background: rgba(255,255,255,0.95);
+  color: #13388F;
+  border: 2px solid #13388F;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-family: "DIN Condensed", sans-serif;
+  font-size: 22px;
+  z-index: 250;
+  white-space: nowrap;
+}
 
+/* Default: hide touch controls on desktop/tablet. Mobile media query below enables them. */
+.touch-controls {
+  display: none;
+}
 
 /* Datum-Wählen-Seite */
-
-/*  Hintergrund für Datum-Wählen-Seite  */
 body.datum {
   background: url("../img/hintergrund2.png") no-repeat center center fixed;
   background-size: cover; 
@@ -394,35 +389,27 @@ body.datum {
   flex-shrink: 0;
   border-radius: 63px;
   box-sizing: border-box;
-
-  /* more space above the title: larger top padding */
-  padding: 56px 36px 24px; /* top right/left bottom */
-  position: fixed;      /* position relative to viewport */
+  padding: 56px 36px 24px;
+  position: fixed;
   left: 50%;
-  /* shift down by half the header height to visually center below the fixed header (header height ~122px) */
   top: calc(50% + 61px);
   transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: column; /* stack title, triangle, then picker vertically */
-  align-items: center;     /* center horizontally */
-  justify-content: center; /* center vertically */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  z-index: 40; /* keep it under the header (header has z-index:50) */
+  z-index: 40;
 }
 
-/* Title inside the wrapper */
-/* date-picker-title removed in favor of .panel-title (shared across panels) */
-
-/* Subtext used under date-picker titles (start screens, messages) */
 .date-picker-subtext {
   color: white;
   font-family: "DIN Condensed", sans-serif;
-  font-size: 30px; /* match the size used on datum_waehlen */
+  font-size: 30px;
   text-align: center;
   margin: 0;
 }
 
-/* Start window title/subtext (same visual style as date-picker, but name relates to Start) */
 .start-title {
   font-family: "DIN Condensed", sans-serif;
   color: white;
@@ -442,7 +429,6 @@ body.datum {
   margin: 0;
 }
 
-/* General panel utilities to keep title/subtext sizes consistent across pages */
 .panel-title {
   font-family: "DIN Condensed", sans-serif;
   font-size: 80px;
@@ -452,7 +438,6 @@ body.datum {
   margin-top: 50px;
   width: 100%;
   color: white;
-  text-align: center;
 }
 .panel-subtext {
   font-family: "DIN Condensed", sans-serif;
@@ -461,50 +446,43 @@ body.datum {
   margin: 0;
 }
 
-/* small white triangle pointing down under the title */
 .date-picker-triangle {
   border-left: 28px solid transparent;
   border-right: 28px solid transparent;
-  border-top: 70px solid #fff; /* larger elongated white tip */
+  border-top: 70px solid #fff;
   margin: 0 auto 10px auto;
 }
 
-/* Date/time input boxes inside the generated picker container */
-/* override inline background/padding set by JS so the area between boxes stays the wrapper color */
 #datePickerContainer {
-  display: flex;          /* stack inputs vertically */
+  display: flex;
   flex-direction: column;
-  align-items: stretch;   /* make children expand to full width */
+  align-items: stretch;
   gap: 15px;
-  padding: 0 !important; /* remove JS-inlined padding */
-  background: transparent !important; /* ensure no white background between boxes */
+  padding: 0 !important;
+  background: transparent !important;
   width: 100%;
   box-sizing: border-box;
 }
 
 #datePickerContainer input[type="date"],
 #datePickerContainer input[type="time"] {
-  background: #fff;           /* white box */
-  border-radius: 30px;        /* requested rounded corners */
-  padding: 12px 16px;         /* comfortable inner spacing */
+  background: #fff;
+  border-radius: 30px;
+  padding: 12px 16px;
   font-size: 16px;
   height: 45px;
   box-sizing: border-box;
-  width: 100%;                /* full width when stacked */
-  text-align: center;        /* center the text inside the white boxes */
-  color: #13388F;            /* blue text to match design */
-  -webkit-text-fill-color: #13388F; /* iOS/Safari fallback */
+  width: 100%;
+  text-align: center;
+  color: #13388F;
+  -webkit-text-fill-color: #13388F;
 }
 
-/* placeholder color (and vendor fallbacks) */
 #datePickerContainer input::placeholder { color: rgba(19,56,143,0.75); }
 #datePickerContainer input::-webkit-input-placeholder { color: rgba(19,56,143,0.75); }
 #datePickerContainer input:-ms-input-placeholder { color: rgba(19,56,143,0.75); }
-
-/* make sure the datalist element doesn't interfere visually */
 #datePickerContainer datalist { display: none; }
 
-/* Confirm image button inside picker */
 #datePickerContainer button#confirmDateBtn {
   background: transparent;
   border: none;
@@ -515,206 +493,244 @@ body.datum {
   justify-content: center;
 }
 #datePickerContainer button#confirmDateBtn img {
-  height: 10px; /* confirm icon height */
+  height: 10px;
   display: block;
-  margin-top: 0;   /* move icon up so it sits well inside the blue wrapper */
+  margin-top: 0;
   margin-bottom: 20px;
   align-self: center;
 }
-/* dim the image when button disabled */
-#datePickerContainer button#confirmDateBtn:disabled img {
-  opacity: 0.45;
-}
+#datePickerContainer button#confirmDateBtn:disabled img { opacity: 0.45; }
 
-/* --- dein bestehender Desktop CSS Code --- */
-/* ... (alles wie gehabt, unverändert) ... */
-
-
-/* ===========================================================
-   >>> Responsive Anpassungen (Mobile & Tablet) <<<
-   =========================================================== */
-
-/* Tablets (max 1024px) */
+/* =========================
+   📱 Responsive – Tablet
+   ========================= */
 @media (max-width: 1024px) {
-  /* Prevent any scrolling on mobile: lock viewport to 100vh and hide overflow */
-  html, body {
-    padding: 0;
+  body {
     margin: 0;
+    padding-top: 140px; /* Platz für festen Header */
     display: flex;
-    flex-direction: column; /* Header remains on top */
-    height: 100vh; /* fixed viewport height prevents scrolling */
-    overflow: hidden; /* disable scrolling */
-    -webkit-overflow-scrolling: auto;
-  }
-
-  .infoBox {
-    width: 80%;
-    height: auto;
-    padding: 25px;
-    margin-top: 20px;
-  }
-
-  .infoBox p {
-    font-size: 36px;
-    max-width: 100%;
-  }
-
-  .infoBox .btn {
-    font-size: 32px;
-    width: 180px;
-    height: 45px;
-  }
-
-  canvas {
-    width: 90%;
-    height: auto;
-    border-radius: 30px;
-  }
-
-  #startWindow,
-  #gameOverWindow,
-  .date-picker-wrapper {
-    width: 80%;
-    height: auto;
-    padding: 30px 20px;
-    border-radius: 40px;
-  }
-
-  .panel-title {
-    font-size: 60px;
-  }
-
-  .panel-subtext {
-    font-size: 24px;
-  }
-}
-
-/* Mobile (max 768px) */
-@media (max-width: 768px) {
-  header {
-    height: 100px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Zentriert Canvas + Titel vertikal */
+    min-height: 100vh;
   }
 
   header h1 {
-    font-size: 40px;
-    border: 3px solid #fff;
-    padding: 8px 16px;
+    font-size: 70px;
+    width: auto;
+    padding: 6px 22px;
   }
 
-  body {
-    padding-top: 110px;
-    overflow: auto;
-  }
-
-  .infoBox {
-    width: 90%;
-    height: auto;
-    padding: 20px;
-    margin-top: 15px;
-    margin-bottom: 30px;
-  }
-
-  .infoBox p {
-    font-size: 26px;
-    line-height: 1.4;
-    margin-bottom: 25px;
-  }
-
-  .infoBox .btn {
-    font-size: 24px;
-    width: 150px;
-    height: 40px;
-  }
-
-  /* Canvas kleiner und scrollbar machen */
   canvas {
-    width: 95%;
-    height: auto;
-    border-radius: 25px;
-    border-width: 3px;
+    width: 90vw;
+    max-height: 70vh;
+    border-radius: 36px;
   }
 
-  #startWindow,
-  #gameOverWindow,
-  .date-picker-wrapper {
-    width: 90%;
-    height: auto;
-    padding: 20px;
-    border-radius: 30px;
-  }
-
-  .panel-title {
-    font-size: 40px;
-    margin-top: 30px;
-  }
-
-  .panel-subtext {
-    font-size: 20px;
-  }
-
-  /* Parkhaus Bilder proportional kleiner */
-  #parkhaus1, #parkhaus2, #parkhaus3, #parkhaus4, #parkhaus5 {
-    width: 25%;
-    height: auto;
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Canvas und Timer zentriert */
+    margin-top: 12px;
   }
 
   #timerDisplay,
   #parkhausName {
-    font-size: 18px;
+    top: -28px;
+    font-size: 22px;
+  }
+
+  #matchedInfo {
     top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
   }
 
-  .date-picker-subtext,
-  .start-subtext {
-    font-size: 20px;
-  }
-
-  .start-title {
-    font-size: 50px;
-  }
-}
-
-
-
-/* Sehr kleine Smartphones (max 480px) */
-@media (max-width: 480px) {
-  header h1 {
-    font-size: 28px;
+  .infoBox {
+    width: 90vw;
+    height: auto;
+    padding: 24px;
   }
 
   .infoBox p {
-    font-size: 20px;
+    font-size: 34px;
   }
 
-  .infoBox .btn {
-    font-size: 20px;
-    width: 130px;
-    height: 36px;
+  #parkhaus1 { width: 45%; }
+  #parkhaus2 { width: 60%; }
+  #parkhaus3 { width: 60%; }
+  #parkhaus4 { width: 60%; }
+  #parkhaus5 { width: 45%; }
+  /* Slightly adjust positions on tablet to reduce overlap */
+  #parkhaus1 { top: 18%; left: 6%; }
+  #parkhaus2 { bottom: 4%; left: 6%; }
+  #parkhaus3 { bottom: 22%; right: 12%; }
+  #parkhaus4 { bottom: 30%; right: 50%; }
+  #parkhaus5 { top: 14%; right: 10%; }
+}
+
+
+/* =========================
+   📱 Responsive – Mobile
+   ========================= */
+@media (max-width: 640px) {
+  body {
+    margin: 0;
+    padding-top: 40px; /* Platz für festen Header */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Zentriert Canvas + Titel vertikal */
+    min-height: 100vh;
   }
 
-  .panel-title {
-    font-size: 32px;
+  header h1 {
+    border-width: 4px;
+    padding: 6px 18px;
   }
 
-  .panel-subtext {
+  /* If the device is short (not tall), reduce the header border/padding so it doesn't touch the background */
+  @media (max-width: 640px) and (max-height: 700px) {
+    header h1 {
+      border-width: 2px;
+      padding: 4px 12px;
+      height: auto;
+      font-size: 50px;
+    }
+    /* reduce body top padding a bit so content still fits on shorter screens */
+    body {
+      padding-top: 100px;
+    }
+  }
+
+  /* Ensure parkhaus selection page header matches other pages on mobile */
+  body.parkwahl header h1 {
+    width: auto; /* allow responsive width like other pages */
+    border-width: 4px;
+    padding: 6px 18px;
+  }
+
+  canvas {
+    width: 90vw;
+    max-height: 60vh;
+    border-radius: 26px;
+  }
+
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Canvas und Timer zentriert */
+    margin-top: 0px; /* noch enger am Header auf Mobile */ /* reduziert den Abstand zum Header */
+    margin-bottom: 12px; /* Abstand nach unten */
+  }
+
+  /* timer and parkhaus name positioned separately on mobile for more spacing */
+  #timerDisplay {
+    top: -20px; /* slightly higher */
     font-size: 18px;
+    right: 16px;
   }
+
+  #parkhausName {
+    top: -20px; /* further above the timer to increase vertical gap */
+    font-size: 18px;
+    left: 16px;
+  }
+  #matchedInfo {
+    top: -20px; /* further above the timer to increase vertical gap */
+    left: 50%;
+  }
+
+  .infoBox {
+    width: 92vw;
+    padding: 18px;
+    border-width: 4px;
+  }
+
+  .infoBox p {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+
+  /* Make parkhaus images larger on small screens */
+  #parkhaus1 { width: 50%; }
+  #parkhaus2 { width: 60%; }
+  #parkhaus3 { width: 60%; }
+  #parkhaus4 { width: 60%; }
+  #parkhaus5 { width: 60%; }
+  /* nudge parkhaus5 further right on narrow screens to avoid overlap */
+  #parkhaus5 { right: 6%; }
+  
+
+
+  /* Touch controls (visible only on mobile) */
+  .touch-controls {
+    /* place controls in the document flow under the canvas */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px; /* spacing under the canvas */
+    z-index: 50;
+    pointer-events: auto;
+  }
+  .touch-controls .arrow-row {
+    display: flex;
+    gap: 18px;           /* Abstand zwischen den drei Pfeiltasten */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 420px; /* prevent row from stretching too wide on larger phones */
+  }
+
+  .arrow-btn {
+    /* uniform touch targets placed under canvas */
+    width: clamp(56px, 12vw, 76px);
+    height: clamp(56px, 12vw, 76px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.9);
+    background: rgba(19,56,143,0.92);
+    color: #fff;
+    font-size: clamp(18px, 4vw, 26px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none; /* prevent default touch scrolling while pressing */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .arrow-btn:active { transform: scale(0.96); }
 
   #startWindow,
   #gameOverWindow,
   .date-picker-wrapper {
-    padding: 15px;
-    border-radius: 20px;
+    width: 88vw;
+    height: auto;
+    border-radius: 40px;
+    padding: 28px 20px;
   }
 
-  .date-picker-triangle {
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 40px solid #fff;
+  .panel-title,
+  .start-title {
+    font-size: 56px;
+    margin-top: 20px;
+  }
+
+  .panel-subtext,
+  .date-picker-subtext,
+  .start-subtext {
+    font-size: 22px;
+  }
+
+  #datePickerContainer input[type="date"],
+  #datePickerContainer input[type="time"] {
+    font-size: 14px;
+    height: 38px;
   }
 }
-
-
-
 
 

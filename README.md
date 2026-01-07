@@ -16,6 +16,7 @@ Gleichzeitig konnten wir trotz der Herausforderungen viel lernen: Der Umgang mit
 API: [https://www.freepublicapis.com/parkhaus-basel-api]
 
 FIGMA: Gestaltung des Layouts und der User Experience
+
 Code-Editor: Visual Studio Code mit Live Server und Copilot Extension
 Genutzte KI-Tools: ChatGPT und Copilot in VS Studio Code
 
